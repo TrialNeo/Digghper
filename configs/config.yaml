@@ -1,0 +1,13 @@
+database:
+  driverName: "PostgreSQL"
+  dataSourceName: "cow"
+  port: 5432
+  host: "localhost"
+  user: "postgres"
+  psw: "postgres"
+  TimeZone: "Asia/Shanghai"
+redis:
+  addr: "localhost:6379"
+  password: ""
+web:
+  port: 9090
