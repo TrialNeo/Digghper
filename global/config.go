@@ -17,4 +17,9 @@ type Config struct {
 		Addr     string
 		Password string
 	}
+	Logger struct {
+		Level   string
+		Console bool
+		Dir     string
+	}
 }

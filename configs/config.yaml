@@ -1,13 +1,20 @@
-database:
-  driverName: "PostgreSQL"
-  dataSourceName: "cow"
-  port: 5432
-  host: "localhost"
-  user: "postgres"
-  psw: "postgres"
-  TimeZone: "Asia/Shanghai"
-redis:
-  addr: "localhost:6379"
-  password: ""
 web:
-  port: 9090
+  port: 8080
+
+database:
+  driverName: postgres
+  dataSourceName: diggpher
+  host: localhost
+  port: 5432
+  user: postgres
+  psw: 123456
+  timeZone: Asia/Shanghai
+
+redis:
+  addr: localhost:6379
+  password: ""
+
+logger:
+  level: info
+  console: true
+  dir: ./logs

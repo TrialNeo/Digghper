@@ -2,6 +2,7 @@ package initialize
 
 import (
 	"Diggpher/global"
+	"Diggpher/pkg/logger"
 	"fmt"
 	"github.com/spf13/viper"
 )
@@ -18,4 +19,13 @@ func LoadConfigs() {
 		panic(fmt.Errorf("Fatal error config file: %s \n", err))
 		return
 	}
+
+	// 初始化日志
+	logConfig := &logger.Config{
+		Level:   global.CONFIG.Logger.Level,
+		Console: global.CONFIG.Logger.Console,
+		Dir:     global.CONFIG.Logger.Dir,
+	}
+	logger.InitLogger(logConfig)
+	global.Log = logger.Log
 }

@@ -1,6 +1,7 @@
 package global
 
 import (
+	"Diggpher/pkg/logger"
 	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
@@ -12,6 +13,7 @@ var (
 	CONFIG   = new(Config)
 	DataBase *gorm.DB
 	Redis    *redis.Client
+	Log      = logger.Log
 )
 
 var (
