@@ -43,3 +43,6 @@ coverage
 .gomodcache/
 .gopath/
 .gotmp/
+
+# Claude local settings
+.claude/
