@@ -2,6 +2,7 @@ package global
 
 import (
 	"encoding/json"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -15,5 +16,6 @@ var (
 		JSONDecoder: json.Unmarshal,
 		JSONEncoder: json.Marshal,
 		Prefork:     false,
+		ProxyHeader: "X-Forwarded-For",
 	}
 )

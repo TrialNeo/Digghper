@@ -4,19 +4,24 @@ import (
 	"Diggpher/internal/controller"
 	"Diggpher/internal/service"
 	"Diggpher/pkg/middleware/auth"
+
 	"github.com/gofiber/fiber/v2"
 )
 
-// bindAdminRoute 绑定admin的路由组
-func bindAdminRoute(admin fiber.Router) {
-	var (
-		adminCtrl = &controller.AdminController{
-			Service: new(service.AdminService),
-		}
-	)
+type adminRouters struct {
+	adminCtrl *controller.AdminController
+}
 
-	admin.Post("/admin/login", adminCtrl.Login)
+// WithAdminRoute 绑定admin的路由组
+func WithAdminRoute(admin fiber.Router) {
+	a := &adminRouters{
+		adminCtrl: &controller.AdminController{
+			Service: service.NewAdminService(),
+		},
+	}
+	admin.Post("/admin/login", a.adminCtrl.Login)
 	admin.Use(auth.MiddlewareAuth()).Route("/admin", func(router fiber.Router) {
-		// 这是授权之后的使用hh
+		// 授权之后的路由
+		_ = router
 	})
 }

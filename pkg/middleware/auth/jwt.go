@@ -4,28 +4,48 @@ import (
 	"Diggpher/global"
 	"errors"
 	"fmt"
-	"github.com/golang-jwt/jwt/v4"
 	"time"
+
+	"github.com/golang-jwt/jwt/v4"
 )
 
 type JWTClaims struct {
 	jwt.RegisteredClaims
-	UserID uint `json:"userID,omitempty"`
+	UserID uint   `json:"userID,omitempty"`
+	Type   string `json:"type,omitempty"`
 }
 
 func GenerateToken(UserID uint) (string, error) {
-	if UserID == 0 {
+	return generateTokenWithType(UserID, "user")
+}
+
+func GenerateAdminToken(adminID uint) (string, error) {
+	return generateTokenWithType(adminID, "admin")
+}
+
+func GenerateAgentToken(agentID uint) (string, error) {
+	return generateTokenWithType(agentID, "agent")
+}
+
+// GenerateMachineToken 机器 SDK 登录 token
+func GenerateMachineToken(machineID uint) (string, error) {
+	return generateTokenWithType(machineID, "machine")
+}
+
+func generateTokenWithType(userID uint, tokenType string) (string, error) {
+	if userID == 0 {
 		return "", errors.New("invalid user ID")
 	}
 
 	claims := &JWTClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    global.JwtIssuer,
-			Subject:   fmt.Sprintf("%d", UserID),
+			Subject:   fmt.Sprintf("%d", userID),
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(global.JwtExpiresAt)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
-		UserID: UserID,
+		UserID: userID,
+		Type:   tokenType,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

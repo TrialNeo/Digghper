@@ -1,11 +1,12 @@
 package global
 
 import (
-	"Diggpher/pkg/logger"
+	"time"
+
 	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
-	"time"
 )
 
 var (
@@ -13,7 +14,8 @@ var (
 	CONFIG   = new(Config)
 	DataBase *gorm.DB
 	Redis    *redis.Client
-	Log      = logger.Log
+	Log      *zap.Logger
+	SugarLog *zap.SugaredLogger
 )
 
 var (

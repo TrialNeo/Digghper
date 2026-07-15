@@ -4,7 +4,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-const ContextUserIDKey = "userID"
+const (
+	ContextUserIDKey    = "userID"
+	ContextTokenTypeKey = "tokenType"
+)
 
 func MiddlewareAuth() fiber.Handler {
 	return func(c *fiber.Ctx) error {
@@ -31,6 +34,25 @@ func MiddlewareAuth() fiber.Handler {
 			return tokenInvalid
 		}
 		c.Locals(ContextUserIDKey, claims.UserID)
+		c.Locals(ContextTokenTypeKey, claims.Type)
+		return c.Next()
+	}
+}
+
+// RequireTokenType 限制 token 类型，防止跨角色访问
+func RequireTokenType(allowed ...string) fiber.Handler {
+	set := make(map[string]struct{}, len(allowed))
+	for _, t := range allowed {
+		set[t] = struct{}{}
+	}
+	return func(c *fiber.Ctx) error {
+		tokenType := GetTokenTypeFromContext(c)
+		if _, ok := set[tokenType]; !ok {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"code":   9999,
+				"errMsg": "无此操作权限",
+			})
+		}
 		return c.Next()
 	}
 }
@@ -45,4 +67,16 @@ func GetUserIDFromContext(c *fiber.Ctx) (uint, bool) {
 		return id, true
 	}
 	return 0, false
+}
+
+// GetTokenTypeFromContext 从上下文中安全获取 token 类型
+func GetTokenTypeFromContext(c *fiber.Ctx) string {
+	tokenType := c.Locals(ContextTokenTypeKey)
+	if tokenType == nil {
+		return ""
+	}
+	if t, ok := tokenType.(string); ok {
+		return t
+	}
+	return ""
 }
