@@ -3,6 +3,7 @@ package initialize
 import (
 	"Diggpher/global"
 	"Diggpher/internal/dao"
+	"Diggpher/internal/query"
 	"fmt"
 
 	"go.uber.org/zap"
@@ -48,4 +49,5 @@ func ConnectDB() {
 	}
 	global.DataBase = DataBase
 	dao.BindDao()
+	query.SetDefault(global.DataBase)
 }

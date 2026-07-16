@@ -1,11 +1,12 @@
 package service
 
 import (
-	"Diggpher/global"
-	"Diggpher/internal/dao"
+	"context"
+	"errors"
+
+	"Diggpher/internal/query"
 	"Diggpher/internal/service/errMsg"
 	"Diggpher/pkg/middleware/auth"
-	"errors"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -19,9 +20,15 @@ type AdminLoginResp struct {
 
 func (a *AdminService) Login(username, password, loginIp string) *AdminLoginResp {
 	resp := new(AdminLoginResp)
+	ctx := context.Background()
 
-	var admin dao.Admin
-	if errors.Is(global.DataBase.Where("username = ?", username).First(&admin).Error, gorm.ErrRecordNotFound) {
+	adminDO := query.Admin
+	admin, err := adminDO.WithContext(ctx).Where(adminDO.Username.Eq(username)).First()
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		resp.Code = errMsg.ErrorAdminUserNotFound
+		return resp
+	}
+	if err != nil {
 		resp.Code = errMsg.ErrorAdminUserNotFound
 		return resp
 	}
@@ -45,7 +52,7 @@ func (a *AdminService) Login(username, password, loginIp string) *AdminLoginResp
 	if admin.LastIp != loginIp {
 		admin.LastIp = loginIp
 		admin.Ips += loginIp + ","
-		global.DataBase.Save(&admin)
+		_ = adminDO.WithContext(ctx).Save(admin)
 	}
 	return resp
 }
